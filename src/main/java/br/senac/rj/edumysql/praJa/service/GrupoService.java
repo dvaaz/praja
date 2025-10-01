@@ -7,9 +7,11 @@ import br.senac.rj.edumysql.praJa.entity.Grupo;
 import br.senac.rj.edumysql.praJa.entity.Ingrediente;
 import br.senac.rj.edumysql.praJa.entity.dto.request.grupo.GrupoDTORequest;
 import br.senac.rj.edumysql.praJa.entity.dto.request.shared.UpdateGrupoDTORequest;
+import br.senac.rj.edumysql.praJa.entity.dto.request.shared.UpdateStatusRequest;
 import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.GrupoAtualizarDTOResponse;
 import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.GrupoDTOResponse;
 import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.ListaIngredienteDeGrupoDTO;
+import br.senac.rj.edumysql.praJa.entity.dto.response.shared.UpdateStatusResponse;
 import br.senac.rj.edumysql.praJa.exception.GrupoNotFoundException;
 import br.senac.rj.edumysql.praJa.repository.FichaTecnicaRepository;
 import br.senac.rj.edumysql.praJa.repository.GrupoRepository;
@@ -32,7 +34,7 @@ public class GrupoService {
 
     // Enums
     private final String grupoIngrNome = GrupoEnum.ingrediente.getText(),
-        grupoFichNome = GrupoEnum.fichaTecnica.getText();
+                        grupoFichNome = GrupoEnum.fichaTecnica.getText();
 
     private final Integer grupoIngrNum = GrupoEnum.ingrediente.getNumber(),
         grupoFichaNum = GrupoEnum.fichaTecnica.getNumber();
@@ -211,6 +213,17 @@ public class GrupoService {
                 }
             }
         }
+    }
+
+    @Transactional
+    public UpdateStatusResponse atualizarStatus(Integer id, UpdateStatusRequest dtoRequest) {
+        Grupo  grupo = this.grupoRepository.buscarGrupoPorId(id)
+            .orElseThrow(() -> new GrupoNotFoundException("Grupo com o id: "+id+" não encontrado"));
+        Integer novoStatus = dtoRequest.getStatus();
+
+        grupo.setStatus(dtoRequest.getStatus());
+        Grupo tempResponse = grupoRepository.save(grupo);
+        return modelMapper.map(tempResponse, UpdateStatusResponse.class);
     }
 
     /**
