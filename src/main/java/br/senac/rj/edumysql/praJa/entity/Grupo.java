@@ -11,7 +11,7 @@ public class Grupo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name ="grup_id")
 	private Integer id;
-	@Column (name="grupo_nome")
+	@Column (name="grupo_nome", unique=true, nullable=false)
 	private String nome;
 	@Column(name = "grupo_cor")
 	private String cor;
