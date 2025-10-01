@@ -38,12 +38,12 @@ public class Estoque {
 		this.id = id;
 	}
 
-	public Date getDia() {
-		return dia;
+	public Date getEntrada() {
+		return entrada;
 	}
 
-	public void setDia(Date entrada) {
-		this.dia = dia;
+	public void setEntrada(Date entrada) {
+		this.entrada = entrada;
 	}
 
 	public Date getValidade() {
