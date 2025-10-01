@@ -2,9 +2,9 @@ package br.senac.rj.edumysql.praJa.entity.dto.response.shared;
 
 import java.util.List;
 
-public class ChangeToAnotherGrupoInBatchDTOResponse {
+public class MudarDeGrupoEmLoteDTOResponse {
     private Integer idGrupo;
-    private List<Integer> idDosItens;
+    private List<String> nomeDosItens;
 
     public Integer getIdGrupo() {
         return idGrupo;
@@ -14,11 +14,11 @@ public class ChangeToAnotherGrupoInBatchDTOResponse {
         this.idGrupo = idGrupo;
     }
 
-    public List<Integer> getIdDosItens() {
-        return idDosItens;
+    public List<String> getNomeDosItens() {
+        return nomeDosItens;
     }
 
-    public void setIdDosItens(List<Integer> idDoItem) {
-        this.idDosItens = idDoItem;
+    public void setNomeDosItens(List<String> idDoItem) {
+        this.nomeDosItens = idDoItem;
     }
 }

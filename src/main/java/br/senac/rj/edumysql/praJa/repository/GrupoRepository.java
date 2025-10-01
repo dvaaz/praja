@@ -13,7 +13,7 @@ public interface GrupoRepository extends JpaRepository<Grupo, Integer> {
 	@Modifying
 	@Query("UPDATE Grupo g SET g.status = :status " +
 			"WHERE g.id = :id")
-	void updateStatus(@Param("id") Integer id, @Param("status") Integer status);
+	boolean updateStatus(@Param("id") Integer id, @Param("status") Integer status);
 
 	@Query("SELECT g FROM Grupo g WHERE g.status >=0")
 	List<Grupo> listar();

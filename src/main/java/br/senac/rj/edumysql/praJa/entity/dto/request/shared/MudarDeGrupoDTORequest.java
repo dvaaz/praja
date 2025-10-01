@@ -1,6 +1,6 @@
 package br.senac.rj.edumysql.praJa.entity.dto.request.shared;
 
-public class ChangeToAnotherGrupoDTORequest {
+public class MudarDeGrupoDTORequest {
     private Integer grupo;
 
     public Integer getGrupo() {

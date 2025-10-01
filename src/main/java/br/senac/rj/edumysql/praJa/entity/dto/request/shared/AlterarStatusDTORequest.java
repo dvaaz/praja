@@ -3,7 +3,7 @@ package br.senac.rj.edumysql.praJa.entity.dto.request.shared;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
-public class UpdateStatusRequest {
+public class AlterarStatusDTORequest {
     @Min(0)
     @Max(1)
     private Integer status;

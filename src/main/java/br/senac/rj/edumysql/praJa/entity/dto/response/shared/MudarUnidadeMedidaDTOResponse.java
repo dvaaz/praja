@@ -1,6 +1,6 @@
 package br.senac.rj.edumysql.praJa.entity.dto.response.shared;
 
-public class AlterarUnidadeMedidasDTOResponse {
+public class MudarUnidadeMedidaDTOResponse {
   private Integer id;
 	private Integer qtd;
   private Integer unidadeMedida;

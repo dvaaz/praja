@@ -6,12 +6,12 @@ import br.senac.rj.edumysql.praJa.entity.FichaTecnica;
 import br.senac.rj.edumysql.praJa.entity.Grupo;
 import br.senac.rj.edumysql.praJa.entity.Ingrediente;
 import br.senac.rj.edumysql.praJa.entity.dto.request.grupo.GrupoDTORequest;
-import br.senac.rj.edumysql.praJa.entity.dto.request.shared.UpdateGrupoDTORequest;
-import br.senac.rj.edumysql.praJa.entity.dto.request.shared.UpdateStatusRequest;
+import br.senac.rj.edumysql.praJa.entity.dto.request.shared.AlterarGrupoDTORequest;
+import br.senac.rj.edumysql.praJa.entity.dto.request.shared.AlterarStatusDTORequest;
 import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.GrupoAtualizarDTOResponse;
 import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.GrupoDTOResponse;
-import br.senac.rj.edumysql.praJa.entity.dto.response.shared.UpdateStatusResponse;
-import br.senac.rj.edumysql.praJa.exception.GrupoNotFoundException;
+import br.senac.rj.edumysql.praJa.entity.dto.response.shared.AlterarStatusDTOResponse;
+import br.senac.rj.edumysql.praJa.exception.GrupoException;
 import br.senac.rj.edumysql.praJa.repository.FichaTecnicaRepository;
 import br.senac.rj.edumysql.praJa.repository.GrupoRepository;
 import br.senac.rj.edumysql.praJa.repository.IngredienteRepository;
@@ -135,7 +135,7 @@ public class GrupoService {
      */
     public GrupoDTOResponse buscarPorID(Integer id) {
         Grupo grupo = this.grupoRepository.buscarPorId(id)
-            .orElseThrow(() -> new GrupoNotFoundException("Grupo com o ID: " + id + " não encontrado"));
+            .orElseThrow(() -> new GrupoException("Grupo com o ID: " + id + " não encontrado"));
 
         GrupoDTOResponse dtoResponse = this.modelMapper.map(grupo, GrupoDTOResponse.class);
 
@@ -151,7 +151,7 @@ public class GrupoService {
         List<Grupo> grupos = this.grupoRepository.listar();
 
         if (grupos.isEmpty()) {
-            throw new GrupoNotFoundException("Não há nenhum grupo criado.");
+            throw new GrupoException("Não há nenhum grupo criado.");
         }
 
         return grupos.stream()
@@ -169,7 +169,7 @@ public class GrupoService {
 
         if (grupos.isEmpty()) {
             GrupoEnum grupoEnum = GrupoEnum.values()[tipo];
-            throw new GrupoNotFoundException("Não há nenhum grupo de " + grupoEnum + " criado.");
+            throw new GrupoException("Não há nenhum grupo de " + grupoEnum + " criado.");
         }
 
         return grupos.stream()
@@ -178,9 +178,9 @@ public class GrupoService {
     }
 
     @Transactional
-    public GrupoAtualizarDTOResponse atualizarGrupo(Integer grupoId, UpdateGrupoDTORequest dtoRequest) {
+    public GrupoAtualizarDTOResponse atualizarGrupo(Integer grupoId, AlterarGrupoDTORequest dtoRequest) {
         Grupo grupo = grupoRepository.buscarPorId(grupoId)
-            .orElseThrow(() -> new GrupoNotFoundException("Grupo com o ID: "+grupoId +" não encontrado"));;
+            .orElseThrow(() -> new GrupoException("Grupo com o ID: "+grupoId +" não encontrado"));;
 
         if (dtoRequest.getCor() != null) {
             grupo.setCor(dtoRequest.getCor());
@@ -204,7 +204,7 @@ public class GrupoService {
     @Transactional
     public void apagarGrupo(Integer grupoId) {
         Grupo grupo = this.grupoRepository.buscarPorId(grupoId)
-            .orElseThrow(() -> new GrupoNotFoundException("Grupo com o Id:" + grupoId + " não encontrado"));
+            .orElseThrow(() -> new GrupoException("Grupo com o Id:" + grupoId + " não encontrado"));
 
         // Remaneja os itens presentes nos grupos para seus devidos grupos padrões.
         if (grupo.getTipo() == grupoIngrNum) {
@@ -231,22 +231,23 @@ public class GrupoService {
     }
 
     @Transactional
-    public UpdateStatusResponse atualizarStatus(Integer id, UpdateStatusRequest dtoRequest) {
+    public AlterarStatusDTOResponse atualizarStatus(Integer id, AlterarStatusDTORequest dtoRequest) {
         Grupo  grupo = this.grupoRepository.buscarPorId(id)
-            .orElseThrow(() -> new GrupoNotFoundException("Grupo com o id: "+id+" não encontrado"));
+            .orElseThrow(() -> new GrupoException("Grupo com o id: "+id+" não encontrado"));
         Integer novoStatus = dtoRequest.getStatus();
 
         grupo.setStatus(dtoRequest.getStatus());
         Grupo tempResponse = grupoRepository.save(grupo);
-        return modelMapper.map(tempResponse, UpdateStatusResponse.class);
+        return modelMapper.map(tempResponse, AlterarStatusDTOResponse.class);
     }
 
+    // Incluir lógica para remanejar os itens que estejam dentro do grupo
     @Transactional
     public boolean apagar(Integer id){
         Grupo grupo = this.grupoRepository.buscarPorId(id)
-                .orElseThrow(()->new GrupoNotFoundException("Grupo com o id: "+id+" não encontrado"));
-        this.grupoRepository.updateStatus(id, apagado);
-        return true;
+                .orElseThrow(()->new GrupoException("Grupo com o id: "+id+" não encontrado"));
+        boolean removido = this.grupoRepository.updateStatus(id, apagado);
+        return removido;
     }
 
     /**
@@ -257,7 +258,7 @@ public class GrupoService {
     @Transactional
     public boolean destroy(Integer id) {
         Grupo grupo = this.grupoRepository.findById(id)
-            .orElseThrow(() -> new GrupoNotFoundException("Grupo com o ID: " + id + " não encontrado"));
+            .orElseThrow(() -> new GrupoException("Grupo com o ID: " + id + " não encontrado"));
 
         if (grupo.getStatus() == apagado){
             grupoRepository.delete(grupo);

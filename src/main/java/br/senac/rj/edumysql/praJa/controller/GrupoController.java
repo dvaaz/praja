@@ -2,11 +2,11 @@ package br.senac.rj.edumysql.praJa.controller;
 
 import br.senac.rj.edumysql.praJa.Enum.GrupoEnum;
 import br.senac.rj.edumysql.praJa.entity.dto.request.grupo.GrupoDTORequest;
-import br.senac.rj.edumysql.praJa.entity.dto.request.shared.UpdateGrupoDTORequest;
-import br.senac.rj.edumysql.praJa.entity.dto.request.shared.UpdateStatusRequest;
+import br.senac.rj.edumysql.praJa.entity.dto.request.shared.AlterarGrupoDTORequest;
+import br.senac.rj.edumysql.praJa.entity.dto.request.shared.AlterarStatusDTORequest;
 import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.GrupoAtualizarDTOResponse;
 import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.GrupoDTOResponse;
-import br.senac.rj.edumysql.praJa.entity.dto.response.shared.UpdateStatusResponse;
+import br.senac.rj.edumysql.praJa.entity.dto.response.shared.AlterarStatusDTOResponse;
 import br.senac.rj.edumysql.praJa.service.GrupoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +28,7 @@ public class GrupoController {
         this.grupoService = grupoService;
     }
 
-    private final Integer grupoIngre = GrupoEnum.ingrediente.getNumber(),
+    private final Integer grupoIngrediente = GrupoEnum.ingrediente.getNumber(),
         grupoFicha = GrupoEnum.fichaTecnica.getNumber();
 
 
@@ -49,7 +49,7 @@ public class GrupoController {
     @GetMapping("ingrediente/listar")
     @Operation(summary = "Listar grupos de ingredientes", description = "Endpoint para obter apenas grupos de ingredientes")
     public ResponseEntity<List<GrupoDTOResponse>> listarGruposDeIngrediente() {
-        List<GrupoDTOResponse> dtoResponse = grupoService.listarGruposDoTipo(grupoIngre);
+        List<GrupoDTOResponse> dtoResponse = grupoService.listarGruposDoTipo(grupoIngrediente);
         return ResponseEntity.ok(dtoResponse);
     }
 
@@ -71,18 +71,18 @@ public class GrupoController {
     @Operation(summary = "Alterações em um grupo", description = "Endpoint para alterar nome e cor de um grupo")
     public ResponseEntity<GrupoAtualizarDTOResponse> atualizar(
             @Valid @PathVariable Integer id,
-            @Valid @RequestBody UpdateGrupoDTORequest atualizarDTORequest) {
+            @Valid @RequestBody AlterarGrupoDTORequest atualizarDTORequest) {
         GrupoAtualizarDTOResponse dtoResponse = grupoService.atualizarGrupo(id, atualizarDTORequest);
         return ResponseEntity.ok(dtoResponse);
     }
 
     @PatchMapping("/alterarstatus/{id}")
     @Operation(summary = "Atualizaçao de grupo", description = "Endpoint para atualização lógica de um grupo")
-    public ResponseEntity<UpdateStatusResponse> atualizarStatus(
+    public ResponseEntity<AlterarStatusDTOResponse> atualizarStatus(
         @Valid @PathVariable Integer id,
-        @Valid @RequestBody UpdateStatusRequest novoStatus
+        @Valid @RequestBody AlterarStatusDTORequest novoStatus
     ) {
-        UpdateStatusResponse statusResponse = grupoService.atualizarStatus(id, novoStatus);
+        AlterarStatusDTOResponse statusResponse = grupoService.atualizarStatus(id, novoStatus);
         if (statusResponse != null){
             return ResponseEntity.ok(statusResponse);
         } else return ResponseEntity.notFound().build();

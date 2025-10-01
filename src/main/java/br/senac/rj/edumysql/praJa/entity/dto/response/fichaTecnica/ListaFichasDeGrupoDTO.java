@@ -1,6 +1,4 @@
-package br.senac.rj.edumysql.praJa.entity.dto.response.grupo;
-
-import br.senac.rj.edumysql.praJa.entity.dto.response.fichaTecnica.FichaTecnicaDTOSemGrupo;
+package br.senac.rj.edumysql.praJa.entity.dto.response.fichaTecnica;
 
 import java.util.List;
 

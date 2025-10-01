@@ -1,6 +1,6 @@
 package br.senac.rj.edumysql.praJa.entity.dto.request.shared;
 
-public class UpdateDescricaoRequest {
+public class AlterarDescricaoDTORequest {
     private String descricao;
 
     public String getDescricao() {

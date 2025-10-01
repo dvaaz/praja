@@ -2,7 +2,7 @@ package br.senac.rj.edumysql.praJa.entity.dto.request.shared;
 
 import java.util.List;
 
-public class ChangeToAnotherGrupoInBatchDTORequest {
+public class MudarDeGrupoEmLoteDTORequest {
   private List<Integer> idDosItens;
 
   public List<Integer> getIdDosItens() {

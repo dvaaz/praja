@@ -1,6 +1,6 @@
 package br.senac.rj.edumysql.praJa.entity.dto.request.shared;
 
-public class UpdateGrupoDTORequest {
+public class AlterarGrupoDTORequest {
     private String nome;
     private String cor;
 

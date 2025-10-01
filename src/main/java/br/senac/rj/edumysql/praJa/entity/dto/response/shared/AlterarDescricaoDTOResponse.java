@@ -1,8 +1,8 @@
 package br.senac.rj.edumysql.praJa.entity.dto.response.shared;
 
-public class UpdateStatusResponse {
+public class AlterarDescricaoDTOResponse {
     private Integer id;
-    private Integer status;
+    private String descricao;
 
     public Integer getId() {
         return id;
@@ -12,11 +12,11 @@ public class UpdateStatusResponse {
         this.id = id;
     }
 
-    public Integer getStatus() {
-        return status;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 }
