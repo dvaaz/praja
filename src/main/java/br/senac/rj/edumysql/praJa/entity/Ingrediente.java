@@ -13,7 +13,7 @@ import java.util.Set;
 		@GeneratedValue(strategy = GenerationType.IDENTITY)
 		@Column(name="ingrediente_id")
 		private Integer id;
-		@Column(name="ingrediente_nome")
+		@Column(name="ingrediente_nome", nullable = false)
 		private String nome;
 		@Column(name ="ingrediente_descricao")
 		private String descricao;

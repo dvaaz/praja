@@ -13,7 +13,7 @@ public class Usuario {
     private int id;
     @Column(name="usuario_nome")
     private String nome;
-    @Column(name="usuario_telefone")
+    @Column(name="usuario_telefone", unique = true)
     private String telefone;
     @Column(name="usuario_senha")
     private String senha;

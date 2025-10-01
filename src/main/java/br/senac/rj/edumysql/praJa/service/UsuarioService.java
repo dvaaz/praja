@@ -1,16 +1,19 @@
 package br.senac.rj.edumysql.praJa.service;
 
 import br.senac.rj.edumysql.praJa.Enum.RoleName;
-import br.senac.rj.edumysql.praJa.Enum.Status;
+import br.senac.rj.edumysql.praJa.Enum.StatusEnum;
 import br.senac.rj.edumysql.praJa.config.SecurityConfiguration;
 import br.senac.rj.edumysql.praJa.entity.Role;
 import br.senac.rj.edumysql.praJa.entity.Usuario;
-import br.senac.rj.edumysql.praJa.entity.dto.request.usuario.UsuarioDTOLoginRequest;
+import br.senac.rj.edumysql.praJa.entity.dto.request.usuario.UsuarioLoginDTORequest;
 import br.senac.rj.edumysql.praJa.entity.dto.request.usuario.UsuarioDTORequest;
-import br.senac.rj.edumysql.praJa.entity.dto.response.usuario.UsuarioDTOLoginResponse;
+import br.senac.rj.edumysql.praJa.entity.dto.response.usuario.UsuarioLoginDTOResponse;
 import br.senac.rj.edumysql.praJa.entity.dto.response.usuario.UsuarioDTOResponse;
 import br.senac.rj.edumysql.praJa.repository.UsuarioRepository;
+import br.senac.rj.edumysql.praJa.service.security.JwtTokenService;
+import br.senac.rj.edumysql.praJa.service.security.UsuarioDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,28 +31,30 @@ public class UsuarioService {
     @Autowired
     private SecurityConfiguration securityConfiguration;
 
-    private final Integer ativo = Status.ATIVO.getStatus(),
-        inativo = Status.INATIVO.getStatus(),
-        apagado = Status.APAGADO.getStatus();
 
 
   private final UsuarioRepository usuarioRepository;
-
   public UsuarioService(UsuarioRepository usuarioRepository) {
     this.usuarioRepository = usuarioRepository;
   }
 
+  private final Integer ativo = StatusEnum.ATIVO.getStatus(),
+          inativo = StatusEnum.INATIVO.getStatus(),
+          apagado = StatusEnum.APAGADO.getStatus();
+
+  // Inicio dos métodos
+  // Criacao
   public UsuarioDTOResponse criar(UsuarioDTORequest dtoRequest) {
 
 
     // Cria um novo usuário com os dados fornecidos
-    Usuario novoUsuario = new Usuario();
-    novoUsuario.setNome(dtoRequest.getNome());
-    novoUsuario.setTelefone(dtoRequest.getTelefone());
-    novoUsuario.setStatus(ativo);
+    Usuario usuario = new Usuario();
+    usuario.setNome(dtoRequest.getNome());
+    usuario.setTelefone(dtoRequest.getTelefone());
+    usuario.setStatus(ativo);
 
     // Codifica a senha do usuário com o algoritmo bcrypt
-    novoUsuario.setSenha(securityConfiguration.passwordEncoder().encode(dtoRequest.getSenha()));
+    usuario.setSenha(securityConfiguration.passwordEncoder().encode(dtoRequest.getSenha()));
 
     // Atribui ao usuário um conjunto permissões específicas
     List<Role> roles = new ArrayList<>();
@@ -60,21 +65,24 @@ public class UsuarioService {
       roles.add(novaRole);
     }
 
+    try {
+      // Salva o novo usuário no banco de dados
+      Usuario saveUsuario = usuarioRepository.save(usuario);
+      UsuarioDTOResponse dtoResponse = new UsuarioDTOResponse();
+      dtoResponse.setId(saveUsuario.getId());
+      dtoResponse.setNome(saveUsuario.getNome());
+      dtoResponse.setTelefone(saveUsuario.getTelefone());
+      dtoResponse.setSenha(saveUsuario.getSenha());
 
-    // Salva o novo usuário no banco de dados
-    usuarioRepository.save(novoUsuario);
+      return dtoResponse;
 
-    UsuarioDTOResponse dtoResponse = new UsuarioDTOResponse();
-    dtoResponse.setId(novoUsuario.getId());
-    dtoResponse.setNome(novoUsuario.getNome());
-    dtoResponse.setTelefone(novoUsuario.getTelefone());
-    dtoResponse.setSenha(novoUsuario.getSenha());
-
-    return dtoResponse;
+    } catch (DataIntegrityViolationException ex) {
+      throw new RuntimeException("Esse telefone ja consta no cadastro: " + dtoRequest.getTelefone(), ex);
+    }
   }
 
 
-  public UsuarioDTOLoginResponse login(UsuarioDTOLoginRequest dtoRequest){
+  public UsuarioLoginDTOResponse login(UsuarioLoginDTORequest dtoRequest){
     // Cria um objeto de autenticação com o email e a senha do usuário
     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
         new UsernamePasswordAuthenticationToken(dtoRequest.getTelefone(), dtoRequest.getSenha());
@@ -86,7 +94,7 @@ public class UsuarioService {
     UsuarioDetailsImpl userDetails = (UsuarioDetailsImpl) authentication.getPrincipal();
 
     // Gera um token JWT para o usuário autenticado
-    UsuarioDTOLoginResponse dtoLoginResponse = new UsuarioDTOLoginResponse();
+    UsuarioLoginDTOResponse dtoLoginResponse = new UsuarioLoginDTOResponse();
     dtoLoginResponse.setId(userDetails.getIdUsuario());
     dtoLoginResponse.setNome(userDetails.getNomeUsuario());
     dtoLoginResponse.setToken(jwtTokenService.generateToken(userDetails));

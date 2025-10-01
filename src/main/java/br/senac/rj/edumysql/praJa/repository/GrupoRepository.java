@@ -16,7 +16,7 @@ public interface GrupoRepository extends JpaRepository<Grupo, Integer> {
 	void updateStatus(@Param("id") Integer id, @Param("status") Integer status);
 
 	@Query("SELECT g FROM Grupo g WHERE g.status >=0")
-	List<Grupo> listarGrupos();
+	List<Grupo> listar();
 
 	@Query("SELECT g FROM Grupo g WHERE g.tipo=:tipo AND g.status>=0 ")
 	List<Grupo> listarPorTipo(@Param("tipo") Integer tipo);
@@ -26,6 +26,6 @@ public interface GrupoRepository extends JpaRepository<Grupo, Integer> {
 	Optional<Grupo> buscarGrupoPadrao(@Param("tipo") Integer tipo, @Param("nome") String nome);
 
 	@Query("SELECT g FROM Grupo g WHERE g.id =:id AND g.status>=0")
-	Optional<Grupo> buscarGrupoPorId(@Param("id") Integer id);
+	Optional<Grupo> buscarPorId(@Param("id") Integer id);
 
 }

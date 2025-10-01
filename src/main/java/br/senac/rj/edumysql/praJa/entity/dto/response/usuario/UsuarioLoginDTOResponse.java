@@ -1,6 +1,6 @@
 package br.senac.rj.edumysql.praJa.entity.dto.response.usuario;
 
-public class UsuarioDTOLoginResponse {
+public class UsuarioLoginDTOResponse {
   private Integer id;
   private String nome;
   private String token;

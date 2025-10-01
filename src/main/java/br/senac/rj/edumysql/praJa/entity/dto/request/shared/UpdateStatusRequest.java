@@ -1,8 +1,12 @@
 package br.senac.rj.edumysql.praJa.entity.dto.request.shared;
 
-public class UpdateStatusRequest {
-    private Integer status;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
+public class UpdateStatusRequest {
+    @Min(0)
+    @Max(1)
+    private Integer status;
 
     public Integer getStatus() {
         return status;

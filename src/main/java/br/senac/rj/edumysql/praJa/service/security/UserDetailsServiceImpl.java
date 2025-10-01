@@ -1,4 +1,4 @@
-package br.senac.rj.edumysql.praJa.service;
+package br.senac.rj.edumysql.praJa.service.security;
 
 
 import br.senac.rj.edumysql.praJa.entity.Usuario;

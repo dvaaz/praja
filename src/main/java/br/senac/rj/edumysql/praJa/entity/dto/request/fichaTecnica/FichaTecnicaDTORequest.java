@@ -1,9 +1,14 @@
 package br.senac.rj.edumysql.praJa.entity.dto.request.fichaTecnica;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class FichaTecnicaDTORequest {
+    @NotBlank(message = "O nome não pode estar em branco")
     private String nome;
     private String descricao;
-    private Integer grupoId;
+    @NotNull(message = "É necessário que haja um grupo")
+    private Integer grupo;
 
     public String getNome() {
         return nome;
@@ -21,11 +26,11 @@ public class FichaTecnicaDTORequest {
         this.descricao = descricao;
     }
 
-    public Integer getGrupoId() {
-        return grupoId;
+    public Integer getGrupo() {
+        return grupo;
     }
 
-    public void setGrupoId(Integer grupoId) {
-        this.grupoId = grupoId;
+    public void setGrupo(Integer grupo) {
+        this.grupo = grupo;
     }
 }

@@ -2,8 +2,8 @@ package br.senac.rj.edumysql.praJa.config;
 
 import br.senac.rj.edumysql.praJa.entity.Usuario;
 import br.senac.rj.edumysql.praJa.repository.UsuarioRepository;
-import br.senac.rj.edumysql.praJa.service.JwtTokenService;
-import br.senac.rj.edumysql.praJa.service.UsuarioDetailsImpl;
+import br.senac.rj.edumysql.praJa.service.security.JwtTokenService;
+import br.senac.rj.edumysql.praJa.service.security.UsuarioDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

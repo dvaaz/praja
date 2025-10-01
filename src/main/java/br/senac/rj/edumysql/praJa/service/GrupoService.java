@@ -1,7 +1,7 @@
 package br.senac.rj.edumysql.praJa.service;
 
 import br.senac.rj.edumysql.praJa.Enum.GrupoEnum;
-import br.senac.rj.edumysql.praJa.Enum.Status;
+import br.senac.rj.edumysql.praJa.Enum.StatusEnum;
 import br.senac.rj.edumysql.praJa.entity.FichaTecnica;
 import br.senac.rj.edumysql.praJa.entity.Grupo;
 import br.senac.rj.edumysql.praJa.entity.Ingrediente;
@@ -10,14 +10,12 @@ import br.senac.rj.edumysql.praJa.entity.dto.request.shared.UpdateGrupoDTOReques
 import br.senac.rj.edumysql.praJa.entity.dto.request.shared.UpdateStatusRequest;
 import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.GrupoAtualizarDTOResponse;
 import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.GrupoDTOResponse;
-import br.senac.rj.edumysql.praJa.entity.dto.response.grupo.ListaIngredienteDeGrupoDTO;
 import br.senac.rj.edumysql.praJa.entity.dto.response.shared.UpdateStatusResponse;
 import br.senac.rj.edumysql.praJa.exception.GrupoNotFoundException;
 import br.senac.rj.edumysql.praJa.repository.FichaTecnicaRepository;
 import br.senac.rj.edumysql.praJa.repository.GrupoRepository;
 import br.senac.rj.edumysql.praJa.repository.IngredienteRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -33,16 +31,7 @@ public class GrupoService {
     private final ModelMapper modelMapper;
 
     // Enums
-    private final String grupoIngrNome = GrupoEnum.ingrediente.getText(),
-                        grupoFichNome = GrupoEnum.fichaTecnica.getText();
 
-    private final Integer grupoIngrNum = GrupoEnum.ingrediente.getNumber(),
-        grupoFichaNum = GrupoEnum.fichaTecnica.getNumber();
-    private final Integer ativo = Status.ATIVO.getStatus(),
-        inativo = Status.INATIVO.getStatus(),
-        apagado = Status.APAGADO.getStatus();
-
-    @Autowired
     public GrupoService(GrupoRepository grupoRepository,
                         IngredienteRepository ingredienteRepository,
                         FichaTecnicaRepository fichaTecnicaRepository,
@@ -53,8 +42,24 @@ public class GrupoService {
         this.modelMapper = modelMapper;
     }
 
+    // Enuns a serem utilizados na classe
+    private final String grupoIngrNome = GrupoEnum.ingrediente.getText(),
+            grupoFichNome = GrupoEnum.fichaTecnica.getText();
+    private final Integer grupoIngrNum = GrupoEnum.ingrediente.getNumber(),
+            grupoFichaNum = GrupoEnum.fichaTecnica.getNumber();
+    private final Integer ativo = StatusEnum.ATIVO.getStatus(),
+            inativo = StatusEnum.INATIVO.getStatus(),
+            apagado = StatusEnum.APAGADO.getStatus();
+
+    // Inicio dos métodos
+
+    /**
+     * Cria um novo grupo de acordo com a regra unique name
+     * @param dtoRequest
+     * @return
+     */
     @Transactional
-    public GrupoDTOResponse criarGrupo(GrupoDTORequest dtoRequest) {
+    public GrupoDTOResponse criar(GrupoDTORequest dtoRequest) {
         Grupo grupo = modelMapper.map(dtoRequest, Grupo.class);
         grupo.setStatus(ativo);
 
@@ -62,10 +67,10 @@ public class GrupoService {
             return null;
         }
             try {
-                Grupo save = grupoRepository.save(grupo);
-                return modelMapper.map(save, GrupoDTOResponse.class);
+                Grupo salvo = grupoRepository.save(grupo);
+                return modelMapper.map(salvo, GrupoDTOResponse.class);
             } catch (DataIntegrityViolationException ex) {
-                throw new RuntimeException("Um objeto com este nome já existe: " + dtoRequest.getNome(), ex);
+                throw new RuntimeException("Erro ao criar grupo ", ex);
             }
         }
 
@@ -116,8 +121,20 @@ public class GrupoService {
             .orElseGet(() -> criarGrupoPadraoIngrediente());
     }
 
-    public GrupoDTOResponse buscarGrupoPorID(Integer id) {
-        Grupo grupo = this.grupoRepository.buscarGrupoPorId(id)
+    @Transactional
+    public Grupo buscarOuCriarGrupoFichaTecnica() {
+        return grupoRepository.buscarGrupoPadrao(
+                        grupoIngrNum, grupoIngrNome)
+                .orElseGet(() -> criarGrupoPadraoFichaTecnica());
+    }
+
+    /**
+     * Busca produto por id
+     * @param id
+     * @return
+     */
+    public GrupoDTOResponse buscarPorID(Integer id) {
+        Grupo grupo = this.grupoRepository.buscarPorId(id)
             .orElseThrow(() -> new GrupoNotFoundException("Grupo com o ID: " + id + " não encontrado"));
 
         GrupoDTOResponse dtoResponse = this.modelMapper.map(grupo, GrupoDTOResponse.class);
@@ -130,8 +147,8 @@ public class GrupoService {
      *
      * @return listDTOResponse
      */
-    public List<GrupoDTOResponse> listarGrupos() {
-        List<Grupo> grupos = this.grupoRepository.findAll();
+    public List<GrupoDTOResponse> listar() {
+        List<Grupo> grupos = this.grupoRepository.listar();
 
         if (grupos.isEmpty()) {
             throw new GrupoNotFoundException("Não há nenhum grupo criado.");
@@ -162,7 +179,7 @@ public class GrupoService {
 
     @Transactional
     public GrupoAtualizarDTOResponse atualizarGrupo(Integer grupoId, UpdateGrupoDTORequest dtoRequest) {
-        Grupo grupo = grupoRepository.buscarGrupoPorId(grupoId)
+        Grupo grupo = grupoRepository.buscarPorId(grupoId)
             .orElseThrow(() -> new GrupoNotFoundException("Grupo com o ID: "+grupoId +" não encontrado"));;
 
         if (dtoRequest.getCor() != null) {
@@ -177,8 +194,6 @@ public class GrupoService {
         } catch (DataIntegrityViolationException ex) {
             throw new RuntimeException("Um objeto com este nome já existe: " + dtoRequest.getNome(), ex);
         }
-
-
     }
 
     /**
@@ -188,7 +203,7 @@ public class GrupoService {
      */
     @Transactional
     public void apagarGrupo(Integer grupoId) {
-        Grupo grupo = this.grupoRepository.buscarGrupoPorId(grupoId)
+        Grupo grupo = this.grupoRepository.buscarPorId(grupoId)
             .orElseThrow(() -> new GrupoNotFoundException("Grupo com o Id:" + grupoId + " não encontrado"));
 
         // Remaneja os itens presentes nos grupos para seus devidos grupos padrões.
@@ -202,7 +217,7 @@ public class GrupoService {
                     ingrediente.setGrupo(grupoPadrao);
                 }
             }
-        } else if (grupo.getTipo() == grupoIngrNum) {
+        } else if (grupo.getTipo() == grupoFichaNum) {
             List<FichaTecnica> listaFichasTecnicas = this.fichaTecnicaRepository.listarFichasTecnicasPorGrupo(grupoId);
             if (!listaFichasTecnicas.isEmpty()) {
                 Grupo grupoPadrao = this.grupoRepository.buscarGrupoPadrao(grupoFichaNum, grupoIngrNome)
@@ -217,7 +232,7 @@ public class GrupoService {
 
     @Transactional
     public UpdateStatusResponse atualizarStatus(Integer id, UpdateStatusRequest dtoRequest) {
-        Grupo  grupo = this.grupoRepository.buscarGrupoPorId(id)
+        Grupo  grupo = this.grupoRepository.buscarPorId(id)
             .orElseThrow(() -> new GrupoNotFoundException("Grupo com o id: "+id+" não encontrado"));
         Integer novoStatus = dtoRequest.getStatus();
 
@@ -226,13 +241,21 @@ public class GrupoService {
         return modelMapper.map(tempResponse, UpdateStatusResponse.class);
     }
 
+    @Transactional
+    public boolean apagar(Integer id){
+        Grupo grupo = this.grupoRepository.buscarPorId(id)
+                .orElseThrow(()->new GrupoNotFoundException("Grupo com o id: "+id+" não encontrado"));
+        this.grupoRepository.updateStatus(id, apagado);
+        return true;
+    }
+
     /**
      * Destroi objeto que tenha sido apagado
      * @param id
      * @return
      */
     @Transactional
-    public boolean destroyGrupoRepository(Integer id) {
+    public boolean destroy(Integer id) {
         Grupo grupo = this.grupoRepository.findById(id)
             .orElseThrow(() -> new GrupoNotFoundException("Grupo com o ID: " + id + " não encontrado"));
 

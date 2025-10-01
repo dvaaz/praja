@@ -34,15 +34,15 @@ public class GrupoController {
 
     @PostMapping("/criar")
     @Operation(summary = "Registro de novo grupo", description = "Endpoint para a criacao de novo objeto grupo")
-    public ResponseEntity<GrupoDTOResponse> criarGrupo(@Valid @RequestBody GrupoDTORequest dtoGrupo) {
-        GrupoDTOResponse dtoResponse = grupoService.criarGrupo(dtoGrupo);
+    public ResponseEntity<GrupoDTOResponse> criar(@Valid @RequestBody GrupoDTORequest dtoGrupo) {
+        GrupoDTOResponse dtoResponse = grupoService.criar(dtoGrupo);
         return ResponseEntity.status(HttpStatus.CREATED).body(dtoResponse);
     }
 
     @GetMapping("/listar")
     @Operation(summary = "Listar todos os grupos", description = "Endpoint para listar todos os grupos")
-    public ResponseEntity<List<GrupoDTOResponse>> listarGrupos() {
-        List<GrupoDTOResponse> dtoResponse = grupoService.listarGrupos();
+    public ResponseEntity<List<GrupoDTOResponse>> listar() {
+        List<GrupoDTOResponse> dtoResponse = grupoService.listar();
         return ResponseEntity.ok(dtoResponse);
     }
 
@@ -62,16 +62,16 @@ public class GrupoController {
 
     @GetMapping("/buscar/{id}")
     @Operation(summary = "listar um grupo", description = "Endpoint para obter um grupo por id")
-    public ResponseEntity<GrupoDTOResponse> listarGrupoPorId(@Valid @PathVariable Integer id) {
-        GrupoDTOResponse dtoResponse = this.grupoService.buscarGrupoPorID(id);
+    public ResponseEntity<GrupoDTOResponse> buscarPorID(@Valid @PathVariable Integer id) {
+        GrupoDTOResponse dtoResponse = this.grupoService.buscarPorID(id);
         return ResponseEntity.ok(dtoResponse);
     }
 
     @PatchMapping("/alterar/{id}")
     @Operation(summary = "Alterações em um grupo", description = "Endpoint para alterar nome e cor de um grupo")
-    public ResponseEntity<GrupoAtualizarDTOResponse> atualizarGrupo(
+    public ResponseEntity<GrupoAtualizarDTOResponse> atualizar(
             @Valid @PathVariable Integer id,
-            @RequestBody UpdateGrupoDTORequest atualizarDTORequest) {
+            @Valid @RequestBody UpdateGrupoDTORequest atualizarDTORequest) {
         GrupoAtualizarDTOResponse dtoResponse = grupoService.atualizarGrupo(id, atualizarDTORequest);
         return ResponseEntity.ok(dtoResponse);
     }
@@ -86,5 +86,18 @@ public class GrupoController {
         if (statusResponse != null){
             return ResponseEntity.ok(statusResponse);
         } else return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/apagar/{id}")
+    @Operation(summary = "Remover grupo", description = "Endpoint para remoção lógica de um grupo")
+    public ResponseEntity apagar(
+            @Valid @PathVariable Integer id
+    ){
+        boolean apagado = grupoService.apagar(id);
+        if (apagado) {
+            return ResponseEntity.status(HttpStatus.OK).body("Grupo apagado com sucesso");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível apagar o grupo");
+        }
     }
 }

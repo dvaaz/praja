@@ -1,6 +1,6 @@
 package br.senac.rj.edumysql.praJa.entity.dto.request.usuario;
 
-public class UsuarioDTOLoginRequest {
+public class UsuarioLoginDTORequest {
   private String telefone;
   private String senha;
 

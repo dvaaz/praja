@@ -18,7 +18,7 @@ public interface FichaTecnicaRepository extends JpaRepository<FichaTecnica, Inte
 	void updateStatus(@Param("id") Integer id, @Param("status") int status) ;
 
 	@Query("SELECT f FROM FichaTecnica f WHERE f.status>=0")
-	List<FichaTecnica> listarFichaTecnicas();
+	List<FichaTecnica> listar();
 
 	@Query("SELECT f FROM FichaTecnica f WHERE f.id = :id AND f.status>=0")
 	Optional<FichaTecnica> buscarFichaTecnicaPorID(@Param("id") Integer fichaTecnicaId);

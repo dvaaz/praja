@@ -1,12 +1,12 @@
 package br.senac.rj.edumysql.praJa.Enum;
 
-public enum Status {
+public enum StatusEnum {
     APAGADO(-1),
 		INATIVO(0),
 		ATIVO(1);
 
     private int status;
-    private Status(int codigo) {
+    private StatusEnum(int codigo) {
         this.status = codigo;
     }
     public int getStatus() {
