@@ -24,8 +24,11 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
   @Autowired
   private JwtTokenService jwtTokenService;
-  @Autowired
+
   private UsuarioRepository usuarioRepository;
+  public UserAuthenticationFilter(UsuarioRepository usuarioRepository) {
+      this.usuarioRepository = usuarioRepository;
+  }
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -53,7 +56,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
   // Verifica se o endpoint requer autenticação antes de processar a requisição
   private boolean checkIfEndpointIsNotPublic(HttpServletRequest request) {
     String requestURI = request.getRequestURI();
-    return !Arrays.asList(SecurityConfiguration.ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).contains(requestURI);
+    return !Arrays.asList(SecurityConfiguration.PUBLIC_ENDPOINTS).contains(requestURI);
   }
 
   // Recupera o token do cabeçalho Authorization da requisição

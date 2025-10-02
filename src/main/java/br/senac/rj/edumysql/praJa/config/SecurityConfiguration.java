@@ -21,7 +21,7 @@ public class SecurityConfiguration {
   @Autowired
   private UserAuthenticationFilter userAuthenticationFilter;
 
-  public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
+  public static final String [] PUBLIC_ENDPOINTS = {
       "/api/usuario/login", // Url que usaremos para fazer login
       "/api/usuario/criar", // Url que usaremos para criar um usuário
 
@@ -73,7 +73,7 @@ public class SecurityConfiguration {
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
+            .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
             .requestMatchers(ENDPOINTS_ADMIN).hasRole("ADMINISTRADOR")
             .requestMatchers(ENDPOINTS_VENDEDOR).hasRole("VENDEDOR")
             .requestMatchers(ENDPOINTS_COZINHA).hasRole("COZINHEIRO")
