@@ -22,8 +22,8 @@ public class SecurityConfiguration {
   private UserAuthenticationFilter userAuthenticationFilter;
 
   public static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-      "/usuario/login", // Url que usaremos para fazer login
-      "/usuario/criar", // Url que usaremos para criar um usuário
+      "/api/usuario/login", // Url que usaremos para fazer login
+      "/api/usuario/criar", // Url que usaremos para criar um usuário
 
       //Swagger/OpenAPI UI,
       "/v3/api-docs/**",
@@ -34,30 +34,37 @@ public class SecurityConfiguration {
 
   // Endpoints que requerem autenticação para serem acessados
   public static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
-      "api/usuario/listar"
+      "/api/usuario/listar"
   };
   public static final String [] ENDPOINTS_CLIENTE = {
-      "api/grupo/fichastecnicas/listar"
+      "/api/grupo/fichastecnicas/listar"
   };
 
   // Endpoints que só podem ser acessador por usuários com permissão de vendedor
   public static final String [] ENDPOINTS_VENDEDOR = {
-      "api/grupo/listar",
-      "api/grupo/fichastecnicas/listar"
+      "/api/grupo/listar",
+      "/api/grupo/fichastecnicas/listar",
+      "/api/ficha/listar",
   };
   public static final String [] ENDPOINTS_COZINHA = {
-      "api/grupo/criar",
-      "api/grupo/listar",
-      "api/grupo/ingrediente/listar",
-      "api/grupo/fichatecnica/listar",
-      "api/grupo/apagar/",
-      "api/grupo/buscar/{id}",
-      "api/grupo/alterar/status/{id}",
+      // GRUPO
+      "/api/grupo/criar",
+      "/api/grupo/listar",
+      "/api/grupo/ingrediente/listar",
+      "/api/grupo/fichatecnica/listar",
+      "/api/grupo/apagar/",
+      "/api/grupo/buscar/{id}",
+      "/api/grupo/alterar/status/{id}",
+
+      // Ficha Tecnica
+      "/api/ficha",
+      "/api/ficha/criar",
+      "/api/ficha/listar",
   };
 
   // Endpoints que só podem ser acessador por usuários com permissão de administrador
   public static final String [] ENDPOINTS_ADMIN = {
-      "api/grupo/**"
+      "/api/grupo/**"
   };
 
   @Bean
