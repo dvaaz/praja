@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.AntPathMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -20,6 +21,8 @@ public class SecurityConfiguration {
 
   @Autowired
   private UserAuthenticationFilter userAuthenticationFilter;
+
+  private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
   public static final String [] PUBLIC_ENDPOINTS = {
       "/api/usuario/login", // Url que usaremos para fazer login
