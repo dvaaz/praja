@@ -11,7 +11,7 @@ import br.senac.rj.edumysql.praJa.entity.dto.response.usuario.UsuarioLoginDTORes
 import br.senac.rj.edumysql.praJa.entity.dto.response.usuario.UsuarioDTOResponse;
 import br.senac.rj.edumysql.praJa.repository.UsuarioRepository;
 import br.senac.rj.edumysql.praJa.service.security.JwtTokenService;
-import br.senac.rj.edumysql.praJa.service.security.UsuarioDetailsImpl;
+import br.senac.rj.edumysql.praJa.service.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -91,7 +91,7 @@ public class UsuarioService {
     Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
     // Obtém o objeto UserDetails do usuário autenticado
-    UsuarioDetailsImpl userDetails = (UsuarioDetailsImpl) authentication.getPrincipal();
+    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
     // Gera um token JWT para o usuário autenticado
     UsuarioLoginDTOResponse dtoLoginResponse = new UsuarioLoginDTOResponse();

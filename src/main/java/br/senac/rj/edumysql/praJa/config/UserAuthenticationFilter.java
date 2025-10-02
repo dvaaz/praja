@@ -3,7 +3,7 @@ package br.senac.rj.edumysql.praJa.config;
 import br.senac.rj.edumysql.praJa.entity.Usuario;
 import br.senac.rj.edumysql.praJa.repository.UsuarioRepository;
 import br.senac.rj.edumysql.praJa.service.security.JwtTokenService;
-import br.senac.rj.edumysql.praJa.service.security.UsuarioDetailsImpl;
+import br.senac.rj.edumysql.praJa.service.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +35,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
       if (token != null) {
         String subject = jwtTokenService.getSubjectFromToken(token); // Obtém o assunto (neste caso, o nome de usuário) do token
         Usuario usuario = usuarioRepository.findByTelefone(subject).get(); // Busca o usuário pelo telefone (que é o assunto do token)
-        UsuarioDetailsImpl userDetails = new UsuarioDetailsImpl(usuario); // Cria um UserDetails com o usuário encontrado
+        UserDetailsImpl userDetails = new UserDetailsImpl(usuario); // Cria um UserDetails com o usuário encontrado
 
         // Cria um objeto de autenticação do Spring Security
         Authentication authentication =

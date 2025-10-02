@@ -16,7 +16,7 @@ public class JwtTokenService {
   private static final String SECRET_KEY = "fowd3245oh3jkb43li44jig23ij";
   private static final String ISSUER = "praja-api";
 
-  public String generateToken(UsuarioDetailsImpl usuario) {
+  public String generateToken(UserDetailsImpl usuario) {
     try {
       Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
       return JWT.create()
